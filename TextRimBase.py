@@ -3,7 +3,7 @@ import os
 import random
 import pickle
 
-weapons = {"Great Sword":40, "Stick":5, "Blood Sword":200, "Rusty Sword":10}
+melee = {"Great Sword":40, "Stick":5, "Blood Sword":200, "Rusty Sword":10}
 
 class Player:
     def __init__(self, name):
@@ -84,7 +84,7 @@ BZombieIG = BZombie("Zombie Boss")
 
 def main():
     os.system('cls')
-    print("Welcome to my game!\n")
+    print("Welcome to TextRim™!\nJk this shit aint trademarked lol we too poor haha XD :*\n")
     print("1.) Start")
     print("2.) Load")
     print("0.) Exit")
@@ -207,12 +207,14 @@ def prefight():
         bnum = random.randint (1, 10)
         if bnum == 1:
             enemy = BGoblinIG
+            print("---- WARNING ----\nYOU ARE ABOUT TO FIGHT A BOSS!")
         else:
             enemy = GoblinIG
     elif enemynum == 2:
         bnum = random.randint (1, 10)
         if bnum == 1:
             enemy = BZombieIG
+            print("---- WARNING ----\nYOU ARE ABOUT TO FIGHT A BOSS!")
         else:
             enemy = ZombieIG
     else:
@@ -238,9 +240,9 @@ def fight():
 
 def attack():
     os.system('cls')
-    PAttack = random.randint(PlayerIG.attack/2, PlayerIG.attack)
-    EAttack = random.randint(enemy.attack/2, enemy.attack)
-    if PAttack == PlayerIG.attack/2:
+    PAttack = round(random.uniform(PlayerIG.attack/2, PlayerIG.attack), 0)
+    EAttack = round(random.uniform(enemy.attack/2, enemy.attack), 0)
+    if PAttack == round(PlayerIG.attack/2, 0):
         print("You miss!")
     else:
         enemy.health -= PAttack
@@ -249,7 +251,7 @@ def attack():
     if enemy.health <= 0:
         win()
     os.system('cls')
-    if EAttack == enemy.attack/2:
+    if EAttack == round(enemy.attack/2, 0):
         print("The %s missed!" % enemy.name)
     else:
         PlayerIG.health -= EAttack
@@ -273,7 +275,7 @@ def drinkpot():
         print("You drank a potion! 50 health has been restored!")
         option = input('')
     os.system('cls')
-    EAttack = random.randint(enemy.attack/2, enemy.attack)
+    EAttack = round(random.uniform(enemy.attack/2, enemy.attack), 0)
     if EAttack == enemy.attack/2:
         print("The %s missed!" % enemy.name)
     else:
@@ -296,8 +298,8 @@ def run():
         print("You failed to get away!")
         option = input('')
         os.system('cls')
-        EAttack = random.randint(enemy.attack/2, enemy.attack)
-        if EAttack == enemy.attack/2:
+        EAttack = round(random.uniform(enemy.attack/2, enemy.attack), 0)
+        if EAttack == round(enemy.attack/2, 0):
             print("The %s missed!" % enemy.name)
         else:
             PlayerIG.health -= EAttack
@@ -336,16 +338,16 @@ def dead():
 def store():
     os.system('cls')
     print("Welcome to the shop!\n\nWhat would you like to buy?")
-    print("Melee: ", weapons)
+    print("Melee: ", melee)
     print("\nPotion - 40 Gold")
     print("\nYou have %i Gold" % PlayerIG.gold)
     print("\n0.) Back\n")
     option = input('--> ')
 
-    if option in weapons:
-        if PlayerIG.gold >= weapons[option]:
+    if option in melee:
+        if PlayerIG.gold >= melee[option]:
             os.system('cls')
-            PlayerIG.gold -= weapons[option]
+            PlayerIG.gold -= melee[option]
             PlayerIG.weap.append(option)
             print("You have bought a %s" % option)
             option = input('')
@@ -413,7 +415,7 @@ def level():
         level()
     elif option == "3":
         os.system('cls')
-        for key, value in list(weapons.items()): weapons[key] = round(value * .9)
+        for key, value in list(melee.items()): melee[key] = round(value * .9)
         PlayerIG.points -= 1
         print("You have increased Intelligence!")
         option = input('')
