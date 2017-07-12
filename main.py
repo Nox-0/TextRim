@@ -2,84 +2,11 @@ import sys
 import os
 import random
 import pickle
+import Player
+import Monster
 
 melee = {"Great Sword":40, "Stick":5, "Blood Sword":200, "Rusty Sword":10}
 
-class Player:
-    def __init__(self, name):
-        self.name = name
-        self.maxhealth = 100
-        self.health = self.maxhealth
-        self.base_attack = 10
-        self.gold = 20
-        self.pots = 2
-        self.weap = [""]
-        self.curweap = [""]
-        self.points = 3
-        self.lvl = 1
-        self.xp = 0
-        self.lvlNext = 10
-
-    @property
-    def attack(self):
-        attack = self.base_attack
-        if self.curweap == "Rusty Sword":
-            attack += 5
-
-        if self.curweap == "Great Sword":
-            attack += 15
-
-        if self.curweap == "Stick":
-            attack += 2
-
-        if self.curweap == "Blood Sword":
-            attack += 50
-
-        return attack
-
-class Goblin:
-    def __init__(self, name):
-        self.name = name
-        self.maxhealth = 50
-        self.health = self.maxhealth
-        self.attack = 5
-        self.goldgain = 10
-        self.potgain = 0
-        self.xpgain = 15
-GoblinIG = Goblin("Goblin")
-
-class Zombie:
-    def __init__(self, name):
-        self.name = name
-        self.maxhealth = 70
-        self.health = self.maxhealth
-        self.attack = 7
-        self.goldgain = 15
-        self.potgain = 0
-        self.xpgain = 20
-ZombieIG = Zombie("Zombie")
-
-class BGoblin:
-    def __init__(self, name):
-        self.name = name
-        self.maxhealth = 100
-        self.health = self.maxhealth
-        self.attack = 20
-        self.goldgain = 50
-        self.potgain = 2
-        self.xpgain = 1500
-BGoblinIG = BGoblin("Goblin Boss")
-
-class BZombie:
-    def __init__(self, name):
-        self.name = name
-        self.maxhealth = 140
-        self.health = self.maxhealth
-        self.attack = 28
-        self.goldgain = 75
-        self.potgain = 3
-        self.xpgain = 2000
-BZombieIG = BZombie("Zombie Boss")
 
 
 def main():
@@ -101,7 +28,7 @@ def main():
             option = input('')
             menu1()
         else:
-            print("You have no save file dor this game.")
+            print("You have no save file for this game.")
             option = input('')
             main()
     elif option == "0":
@@ -114,7 +41,7 @@ def start():
     print("Hello, what is your name?")
     option = input("--> ")
     global PlayerIG
-    PlayerIG = Player(option)
+    PlayerIG = Player.Player(option)
     start0()
 
 def start0():
@@ -131,7 +58,7 @@ def start1():
     print("Gold: %d" % PlayerIG.gold)
     print("Current Weapon: %s" % PlayerIG.curweap)
     print("Potions: %d" % PlayerIG.pots)
-    print("Health: %i/%i" % (PlayerIG.health, PlayerIG.maxhealth))
+    print("Health: %i/%i" % (PlayerIG.hp, PlayerIG.maxhp))
     print("Level: ", int(PlayerIG.lvl))
     print("Next: ", int(PlayerIG.lvlNext))
     print("Level percentage: {:.0%}".format(PlayerIG.xp/PlayerIG.lvlNext))
@@ -206,26 +133,26 @@ def prefight():
     if enemynum == 1:
         bnum = random.randint (1, 10)
         if bnum == 1:
-            enemy = BGoblinIG
+            enemy = Monster.BGoblinIG
             print("---- WARNING ----\nYOU ARE ABOUT TO FIGHT A BOSS!")
         else:
-            enemy = GoblinIG
+            enemy = Monster.GoblinIG
     elif enemynum == 2:
         bnum = random.randint (1, 10)
         if bnum == 1:
-            enemy = BZombieIG
+            enemy = Monster.BZombieIG
             print("---- WARNING ----\nYOU ARE ABOUT TO FIGHT A BOSS!")
         else:
-            enemy = ZombieIG
+            enemy = Monster.ZombieIG
     else:
         prefight()
-    enemy.health = enemy.maxhealth
+    enemy.hp = enemy.maxhp
     fight()
 
 def fight():
     os.system('cls')
     print("%s              vs            %s" % (PlayerIG.name, enemy.name))
-    print("%s\'s Health: %d/%d          %s\'s Health: %d/%d" % (PlayerIG.name, PlayerIG.health, PlayerIG.maxhealth, enemy.name, enemy.health, enemy.maxhealth))
+    print("%s\'s Health: %d/%d          %s\'s Health: %d/%d" % (PlayerIG.name, PlayerIG.hp, PlayerIG.maxhp, enemy.name, enemy.hp, enemy.maxhp))
     print("Potions: %i" % PlayerIG.pots)
     print("1.) Attack\n2.) Drink Potion\n3.) Run")
     option = input("--> ")
@@ -245,19 +172,19 @@ def attack():
     if PAttack == round(PlayerIG.attack/2, 0):
         print("You miss!")
     else:
-        enemy.health -= PAttack
+        enemy.hp -= PAttack
         print("You deal %i damage!"  % PAttack)
     option = input('')
-    if enemy.health <= 0:
+    if enemy.hp <= 0:
         win()
     os.system('cls')
     if EAttack == round(enemy.attack/2, 0):
         print("The %s missed!" % enemy.name)
     else:
-        PlayerIG.health -= EAttack
+        PlayerIG.hp -= EAttack
         print("The %s deals %i damage!" % (enemy.name, EAttack))
     option = input('')
-    if PlayerIG.health <= 0:
+    if PlayerIG.hp <= 0:
         dead()
     else:
         fight()
@@ -269,20 +196,20 @@ def drinkpot():
         option = input('')
     else:
         PlayerIG.pots -= 1
-        PlayerIG.health += 50
-        if PlayerIG.health > PlayerIG.maxhealth:
-            PlayerIG.health = PlayerIG.maxhealth
-        print("You drank a potion! 50 health has been restored!")
+        PlayerIG.hp += 50
+        if PlayerIG.hp > PlayerIG.maxhp:
+            PlayerIG.hp = PlayerIG.maxhp
+        print("You drank a potion! 50 hp has been restored!")
         option = input('')
     os.system('cls')
     EAttack = round(random.uniform(enemy.attack/2, enemy.attack), 0)
     if EAttack == enemy.attack/2:
         print("The %s missed!" % enemy.name)
     else:
-        PlayerIG.health -= EAttack
+        PlayerIG.hp -= EAttack
         print("The %s deals %i damage!" % (enemy.name, EAttack))
     option = input('')
-    if PlayerIG.health <= 0:
+    if PlayerIG.hp <= 0:
         dead()
     else:
         fight()
@@ -302,10 +229,10 @@ def run():
         if EAttack == round(enemy.attack/2, 0):
             print("The %s missed!" % enemy.name)
         else:
-            PlayerIG.health -= EAttack
+            PlayerIG.hp -= EAttack
             print("The %s deals %i damage!" % (enemy.name, EAttack))
         option = input('')
-        if PlayerIG.health <= 0:
+        if PlayerIG.hp <= 0:
             dead()
         else:
             fight()
@@ -408,7 +335,7 @@ def level():
         GoblinIG.goldgain += 2
         ZombieIG.goldgain += 2
         BGoblinIG.goldgain += 5
-        BZombieIG.goldain += 5
+        BZombieIG.goldgain += 5
         PlayerIG.points -= 1
         print("You have increased Dexterity!")
         option = input('')
