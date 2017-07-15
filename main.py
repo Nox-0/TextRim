@@ -4,10 +4,9 @@ import random
 import pickle
 import Player
 import Monster
+import Items
 
 melee = {"Great Sword":40, "Stick":5, "Blood Sword":200, "Rusty Sword":10}
-
-
 
 def main():
     os.system('cls')

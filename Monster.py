@@ -1,6 +1,3 @@
-import os
-import sys
-
 class Monster():
     def __init__(self, name, maxhp, hp, attack, potgain, xpgain, goldgain):
         self.name = name
@@ -17,3 +14,6 @@ ZombieIG = Monster("Zombie", 70, 70, 7, 0, 20, 15)
 
 BGoblinIG = Monster("Goblin Boss", 100, 100, 20, 2, 1500, 50)
 BZombieIG = Monster("Zombie Boss", 140, 140, 28, 3, 2000, 75)
+
+mobs = [GoblinIG, ZombieIG]
+bossMobs = [BZombieIG, BZombieIG]
