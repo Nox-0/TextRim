@@ -1,6 +1,5 @@
 import Items
 
-inventory[]
 
 class Character:
     def __init__(self, name):
@@ -8,13 +7,13 @@ class Character:
         self.maxhp= 100
         self.hp = self.maxhp
         self.base_attack = 10
-        self.pots = 2
         self.weap = [""]
         self.curweap = [""]
         self.points = 3
         self.lvl = 1
         self.xp = 0
         self.lvlNext = 10
+        self.gold = 10
 
     @property
     def attack(self):
@@ -27,6 +26,9 @@ class Character:
     @property
     def missChance(self):
         miss = 5
+
+    inv = []
+    potInv = []
 
     #@property
     #def critChance(self):
