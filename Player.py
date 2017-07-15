@@ -1,5 +1,7 @@
 import Items
 
+inventory[]
+
 class Character:
     def __init__(self, name):
         self.name = name
@@ -17,8 +19,18 @@ class Character:
     @property
     def attack(self):
         attack = self.base_attack
-        attack += self.curweap(curweap.damage)
 
+    @property
+    def critAttack(self):
+        critAttack = 1.2 * attack
+
+    @property
+    def missChance(self):
+        miss = 5
+
+    #@property
+    #def critChance(self):
+    #    critChance = 0.1
 
 """
 @property

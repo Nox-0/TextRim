@@ -6,7 +6,8 @@ import Player
 import Monster
 
 #TO DO:
-#FIGHT, SHOP, STATS (AND LEVEL STATS), INVENTORY, POTIONS, MAGICKA, RUN
+# SHOP, STATS (AND LEVEL STATS), INVENTORY, POTIONS, MAGICKA, RUN, CRIT DAMAGE AND CHANCE, COMPLEX COMBAT, RUN CHANCE AGAINST BOSS
+# CONSIDERING MAKING A LEVELXP FUNCTION
 
 #MAIN MENU
 def menu():
@@ -28,6 +29,7 @@ def menu():
     elif option == "0": sys.exit()
     else: menu()
 
+
 #STARTING NEW GAME
 def newGame():
     os.system('cls')
@@ -37,12 +39,14 @@ def newGame():
     PlayerIG = Player.Character(option)
     start()
 
+
 #CONFIRMING THAT IT THE NAME WORKS
 def start():
     os.system('cls')
     print("Welcome, %s!" % PlayerIG.name)
     option = input('')
     gameLoop()
+
 
 #HOME MENU SCREEN
 def gameLoop():
@@ -66,17 +70,19 @@ def gameLoop():
         sys.exit()
     else: home()
 
+
 #PREFIGHT WHERE WE DETERMINE WHAT MOB THE PLAYER WILL FACE
 def prefight():
     global enemy
     enemyNum = random.randint(1,10)
     if enemyNum == 1:
-        bNum = random.choice(Monster.bossMobs)
-        enemy = bNum
-        fight()
+        enemy = random.choice(Monster.bossMobs)
     else:
         enemy = random.choice(Monster.mobs)
-        fight()
+
+    enemy.hp = enemy.maxhp
+    fight()
+
 
 #THEY FIGHT TO THE DEATH
 def fight():
@@ -96,8 +102,64 @@ def fight():
     else:
         fight()
 
-def playerAttack:
-    
+
+#PLAYER ATTACK FUNCTINO
+def playerAttack():
+    os.system('cls')
+    playerAttack = round(random.uniform(PlayerIG.attack/2, PlayerIG.attack), 0)
+    acc = Dice.missRoll() #acc for accuracy
+    if acc <= PlayerIG.miss:
+        print("You missed!")
+        enemyAttack()
+    else:
+        enemy.hp -= playerAttack
+        print("You deal %i damage!"  % playerAttack)
+
+    option = input('')
+    if enemy.hp <= 0: win()
+    else: enemyAttack()
+
+#ENEMY'S ATTACK FUNCTION
+def enemyAttack():
+    os.system('cls')
+    enemyAttack = round(random.uniform(enemy.attack/2, enemy.attack), 0)
+    acc = Dice.missRoll() #acc for accuracy
+    if acc <= enemy.miss:
+        print("%s missed!" % enemy.name)
+        fight()
+    else:
+        enemy.hp -= playerAttack
+        print("%s dealt %i damage!"  % (enemy.name, enemyAttack))
+
+    option = input('')
+    if player.hp <= 0: lose()
+else: fight()
+
+def win():
+    os.system('cls')
+    PlayerIG.gold += enemy.goldgain
+    PlayerIG.pots += enemy.potgain
+    PlayerIG.xp += enemy.xpgain
+    while PlayerIG.xp >= PlayerIG.lvlNext:
+        PlayerIG.lvl += 1
+        PlayerIG.xp = PlayerIG.xp - PlayerIG.lvlNext
+        PlayerIG.lvlNext = round(PlayerIG.lvlNext * 1.5)
+        PlayerIG.points += 1
+    print("You have defeated the %s!" % enemy.name)
+    print("You found %i gold!" % enemy.goldgain)
+    print("You have recieved %i potions!\n" % enemy.potgain)
+    print("Experience gained: %i" % enemy.xpgain)
+    print("Current level: %i" % PlayerIG.lvl)
+    print("Level percentage: {:.0%}".format(PlayerIG.xp/PlayerIG.lvlNext))
+    option = input('')
+    gameLoop()
+
+def lose():
+    os.system('cls')
+    print("You are dead")
+    option = input('')
+    gameLoop()
+
 
 #FOR WHEN THE PLAYER IS A PUSSY
 def run():
@@ -106,8 +168,13 @@ def run():
     if runnum == 1:
         print("You have successfully ran away!")
         option = input('')
-        start1()
+        gameLoop()
     else:
+        print("You failed to get away!")
+        option = input('')
+        os.system('cls')
+        enemyAttack()
+
 
 
 #I THOUGHT THIS WOULD BE NICE TO LOOK AT
@@ -128,4 +195,18 @@ class GameState:
             print("\nGame has been saved!\n")
         option = input()
         gameLoop()
+
+#DICE ROLL CLASS - HANDLES COMBAT RNG
+class Dice:
+    def critRoll(num): #DOESNT DO ANYTHING YET
+        roll = random.randint(num, 1)
+        return roll
+
+    def missRoll():
+        roll = random.randint(1,100)
+        return roll
+
+
+
+
 menu()
