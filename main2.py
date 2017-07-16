@@ -1,10 +1,12 @@
 import sys, os, random, pickle, Player, Monster, Items
 
 #AN EQUINOX ENTERTAINMENT GAME XD
-
-#TO DO:
-# STATS (AND LEVEL STATS), INVENTORY, POTIONS, MAGICKA, RUN, CRIT DAMAGE AND CHANCE, COMPLEX COMBAT, RUN CHANCE AGAINST BOSS, SHOP POTIONS, MORE ITEMS
-# CONSIDERING MAKING A LEVELXP FUNCTION
+#SHOULD FOCUS ON:
+#TODO: MAKING THE WEAPON AFFECT DAMAGE. <- AFTER THIS IS DONE PUSH TO MASTER
+#TO CREATE:
+#TODO: LEVELING STATS, POTIONS, MAGICKA/MAGIC, CRIT DAMAGE/CHANCE, SHOP POTIONS, PLAYER CLASSES/ROLES,
+#TO IMPROVE:
+#TODO: COMBAT, SHOP, BETTER ENEMIES, DYING, EQUIPING
 
 #MAIN MENU
 def menu():
@@ -53,18 +55,12 @@ def gameLoop():
     print("\n9) Save Game \n0) Exit")
     option = input("--> ")
 
-    if option == "1":
-        prefight()
-    elif option == "2":
-        Shop.shopFront()
-    elif option == "3":
-        inventory()
-    elif option == "4":
-        pass
-    elif option == "9":
-        GameState.saveGame()
-    elif option == "0":
-        sys.exit()
+    if option == "1": prefight()
+    elif option == "2": Shop.shopFront()
+    elif option == "3": inventory()
+    elif option == "4": stats()
+    elif option == "9": GameState.saveGame()
+    elif option == "0": sys.exit()
     else: gameLoop()
 
 
@@ -86,18 +82,14 @@ def fight():
     os.system('cls')
     print("%5s              vs            %5s" % (PlayerIG.name, enemy.name))
     print("Health: %d/%d                   Health: %d/%d" % (PlayerIG.hp, PlayerIG.maxhp, enemy.hp, enemy.maxhp))
-    print("1.) Attack \n2.) Magicka \n3.) Potions \n 5) Run")
+    print("1) Attack \n2) Magicka \n3) Potions \n 5) Run")
     option = input("--> ")
-    if option == "1":
-        attack()
-    elif option == "2":
-        magicka()
-    elif option == "3":
-        potions()
-    elif option == "5":
-        sys.exit()
-    else:
-        fight()
+
+    if option == "1": attack()
+    elif option == "2": magicka()
+    elif option == "3": potions()
+    elif option == "5": sys.exit()
+    else: fight()
 
 
 #PLAYER ATTACK FUNCTINO
@@ -150,7 +142,6 @@ def win():
         PlayerIG.points += 1
     print("You have defeated the %s!" % enemy.name)
     print("You found %i gold!" % enemy.goldgain)
-    print("You have recieved %i potions!\n" % enemy.potgain)
     print("Experience gained: %i" % enemy.xpgain)
     print("Current level: %i" % PlayerIG.lvl)
     print("Level percentage: {:.0%}".format(PlayerIG.xp/PlayerIG.lvlNext))
@@ -180,23 +171,20 @@ def run():
         enemyAttack()
 
 
-
-
-
-
-
-
+#GENERAL INVENTORY OF THE PLAYER
 def inventory():
     os.system('cls')
-    print("1) Potions")
-    print("0) Back")
     print("This is your inventory:")
-    for items in inv:
-        print(inv)
+    for items in PlayerIG.inv:
+        print(items)
+
+    print("\n1) Potions")
+    print("0) Back")
     option = input("--> ")
 
     if option == "0": gameLoop()
-    if option == "1": potInventory()
+    elif option == "1": potInventory()
+    elif option in PlayerIG.inv: Equip.weaponEquip(option)
 
 
 #THIS POTION INVENTORY IS FOR WHEN THE PLAYER IS NOT IN BATTLE
@@ -204,7 +192,7 @@ def potInventory():
     os.system('cls')
     print("%s Health: %d" %(PlayerIG.name, PlayerIG.hp))
     print("0) Back")
-    for pot in Character.potInv:
+    for pot in PlayerIG.potInv:
         print(pot)
     option = input("--> ")
 
@@ -216,6 +204,28 @@ def potInventory():
         if PlayerIG.hp > PlayerIG.maxhp:
             PlayerIG.hp = PlayerIG.maxhp
     else: print("You don't have that potion!")
+
+
+def stats():
+    os.system('cls')
+    print("Stats:\n")
+    print("Name: %s" % PlayerIG.name)
+    print("Attack: %i" % PlayerIG.attack)
+    print("Gold: %d" % PlayerIG.gold)
+    print("Current Weapon: %s" % PlayerIG.curweap)
+    print("Health: %i/%i" % (PlayerIG.hp, PlayerIG.maxhp))
+    print("Level: ", int(PlayerIG.lvl))
+    print("Next: ", int(PlayerIG.lvlNext))
+    print("Level percentage: {:.0%}".format(PlayerIG.xp/PlayerIG.lvlNext))
+    input("--> ")
+    gameLoop()
+
+class Equip:
+    def weaponEquip(weapon):
+        PlayerIG.curweap = weapon
+        print("You have equiped %s." % weapon)
+        input("--> ")
+        inventory()
 
 
 class Shop:
@@ -231,21 +241,35 @@ class Shop:
         if option == "1": Shop.shopWeapons()
         elif option == "2": Shop.shopPotions()
         elif option == "0": gameLoop()
-        else: shopFront()
+        else: Shop.shopFront()
 
     def shopWeapons():
         os.system('cls')
         print("You look like someone who knows how to wield a weapon. Well, you\'ve come to the right place.")
         print("\nGold: %d" % PlayerIG.gold)
-        print("0) Back")
-        for weapons in Items.buyWeapons:
-            print(weapons,":" Items.buyWeapons[weapons])
+
+        for weapons in Items.buyableWeapons:
+            print(weapons.name, ":", weapons.value)
+
+        print("\n0) Back")
         option = input("--> ")
 
         if option == "0":
             Shop.shopFront()
-        else: shopWeapons()
-
+        elif option in Items.buyWeapons:
+            if PlayerIG.gold >= Items.buyWeapons[option]:
+                os.system('cls')
+                PlayerIG.gold -= Items.buyWeapons[option]
+                PlayerIG.inv.append(option)
+                print("You have bought a %s" % option)
+                option = input('')
+                Shop.shopWeapons()
+            else:
+                os.system('cls')
+                print("You don't have enough gold!")
+                option = input('')
+                store()
+        else: Shop.shopWeapons()
 
 #GAME STATE
 class GameState:
@@ -272,7 +296,7 @@ class Dice:
         roll = random.randint(num, 1)
         return roll
 
-    def missRoll():
+    def missRoll(num):
         roll = random.randint(1,100)
         return roll
 

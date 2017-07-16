@@ -13,11 +13,14 @@ class Character:
         self.lvl = 1
         self.xp = 0
         self.lvlNext = 10
-        self.gold = 10
+        self.gold = 1000
+        self.inv = []
+        self.potInv = []
 
     @property
     def attack(self):
         attack = self.base_attack
+        return attack
 
     @property
     def critAttack(self):
@@ -27,8 +30,7 @@ class Character:
     def missChance(self):
         miss = 5
 
-    inv = []
-    potInv = []
+
 
     #@property
     #def critChance(self):
