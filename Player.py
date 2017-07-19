@@ -20,7 +20,11 @@ class Character:
     @property
     def attack(self):
         attack = self.base_attack
+        if self.curweap in Items.meleeWeapons:
+                weaponAttack = Items.meleeWeapons[self.curweap]["value"]
+                attack += weaponAttack
         return attack
+
 
     @property
     def critAttack(self):

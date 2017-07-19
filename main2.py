@@ -1,8 +1,6 @@
 import sys, os, random, pickle, Player, Monster, Items
 
 #AN EQUINOX ENTERTAINMENT GAME XD
-#SHOULD FOCUS ON:
-#TODO: MAKING THE WEAPON AFFECT DAMAGE. <- AFTER THIS IS DONE PUSH TO MASTER
 #TO CREATE:
 #TODO: LEVELING STATS, POTIONS, MAGICKA/MAGIC, CRIT DAMAGE/CHANCE, SHOP POTIONS, PLAYER CLASSES/ROLES,
 #TO IMPROVE:
@@ -85,10 +83,10 @@ def fight():
     print("1) Attack \n2) Magicka \n3) Potions \n 5) Run")
     option = input("--> ")
 
-    if option == "1": attack()
+    if option == "1": playerAttack()
     elif option == "2": magicka()
     elif option == "3": potions()
-    elif option == "5": sys.exit()
+    elif option == "5": run()
     else: fight()
 
 
@@ -248,18 +246,18 @@ class Shop:
         print("You look like someone who knows how to wield a weapon. Well, you\'ve come to the right place.")
         print("\nGold: %d" % PlayerIG.gold)
 
-        for weapons in Items.buyableWeapons:
-            print(weapons.name, ":", weapons.value)
+        for weapons in Items.meleeWeapons:
+            print(weapons, ":", Items.meleeWeapons[weapons]["value"])
 
         print("\n0) Back")
         option = input("--> ")
 
         if option == "0":
             Shop.shopFront()
-        elif option in Items.buyWeapons:
-            if PlayerIG.gold >= Items.buyWeapons[option]:
+        elif option in Items.meleeWeapons:
+            if PlayerIG.gold >= Items.meleeWeapons[option]["value"]:
                 os.system('cls')
-                PlayerIG.gold -= Items.buyWeapons[option]
+                PlayerIG.gold -= Items.meleeWeapons[option]["value"]
                 PlayerIG.inv.append(option)
                 print("You have bought a %s" % option)
                 option = input('')
