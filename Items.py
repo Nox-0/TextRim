@@ -7,6 +7,11 @@ meleeWeapons = {
 }
 
 
+#SPECIAL MELEE WEAPONS - NOT BUYABLE
+specialMeleeWeapons = {
+
+}
+
 #POTIONS:
 potions = {
     "Potion of Minor Healing": {"heal": 25, "value": 10, "quantity": 1},

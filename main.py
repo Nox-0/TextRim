@@ -1,8 +1,8 @@
-import sys, os, random, pickle, Player, Monster, Items
+import sys, os, random, pickle, Player, Monster, Items, magicka
 
-#AN EQUINOX ENTERTAINMENT GAME XD
+#A GAME MADE BY THE ONE TRUE GOD.
 #TO CREATE:
-#TODO: MAGICKA/MAGIC, CRIT DAMAGE/CHANCE, PLAYER CLASSES/ROLES, EQUIPMENT REPLACING, LEVELXP FUNCTION, MP CAP, EQUIPMENT
+#TODO: MAGICKA/MAGIC, CRIT DAMAGE/CHANCE, PLAYER RACES, EQUIPMENT REPLACING, LEVELXP FUNCTION, MP CAP, EQUIPMENT, CLASS PERKS, PERK
 #TO IMPROVE:
 #TODO: COMBAT, SHOP, BETTER ENEMIES, DYING, EQUIPPING
 
@@ -49,14 +49,13 @@ def start():
 def gameLoop():
     os.system('cls')
     print("1) Fight")
-    print("\n2) Shop \n3) Inventory \n4) Stats")
+    print("\n2) Shop \n3) Character \n4) Stats")
     print("\n9) Save Game \n0) Exit")
     option = input("--> ")
 
     if option == "1": prefight()
     elif option == "2": Shop.shopFront()
-    elif option == "3": inventory()
-    elif option == "4": stats()
+    elif option == "3": playerMenu()
     elif option == "9": GameState.saveGame()
     elif option == "0": sys.exit()
     else: gameLoop()
@@ -80,11 +79,11 @@ def fight():
     os.system('cls')
     print("%5s              vs            %5s" % (PlayerIG.name, enemy.name))
     print("Health: %d/%d                   Health: %d/%d" % (PlayerIG.hp, PlayerIG.maxhp, enemy.hp, enemy.maxhp))
-    print("1) Attack \n2) Magicka \n3) Potions \n5) Run")
+    print("1) Attack \n2) Spells \n3) Potions \n5) Run")
     option = input("--> ")
 
     if option == "1": playerAttack()
-    elif option == "2": magicka()
+    elif option == "2": spellBattle()
     elif option == "3": potBattle()
     elif option == "5": run()
     else: fight()
@@ -148,6 +147,8 @@ def potBattle():
     else: print("You don't have that potion!")
     potInventory()
 
+def spellBattle():
+    fight()
 
 #WIN FUNCITONS
 def win():
@@ -192,15 +193,26 @@ def run():
 
 
 #------------------------------------------------------------------------------
+#PLAYER MENU
+def playerMenu():
+    os.system('cls')
+    print("1) Stats \n2) Inventory \n3) Spells \n4) Perks \n\n0) Back")
+    option = input('--> ')
+
+    if option == "1": stats()
+    elif option == "2": inventory()
+    elif option == "3": spellInventory()
+    elif option == "4": perks()
+    elif option == "0": gameLoop()
+    else: playerMenu()
 
 #GENERAL INVENTORY OF THE PLAYER
 def inventory():
     os.system('cls')
-    print("This is your inventory:")
     for items in PlayerIG.inv:
         print(items)
 
-    print("\n1) Potions")
+    print("\n1) See Potions")
     print("0) Back")
     option = input("--> ")
 
@@ -209,6 +221,14 @@ def inventory():
     elif option in PlayerIG.inv: Equip.weaponEquip(option)
     else: inventory()
 
+def spellInventory():
+    os.system('cls')
+    for spells in PlayerIG.spellsInv:
+        print(spells)
+
+    option = input("--> ")
+    if option == "0": gameLoop()
+    else: spellInventory()
 
 #THIS POTION INVENTORY IS FOR WHEN THE PLAYER IS NOT IN BATTLE
 def potInventory():
@@ -310,7 +330,7 @@ class Equip:
     def weaponEquip(weapon):
         PlayerIG.curweap = weapon
         PlayerIG.inv.remove(weapon)
-        print("You have equipped %s." % weapon)
+        print("You have equipped your %s." % weapon)
         input("--> ")
         inventory()
 

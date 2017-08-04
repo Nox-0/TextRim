@@ -16,6 +16,7 @@ class Character:
         self.miss = 10  #subject to change
         self.inv = []
         self.potInv = []
+        self.spellInv = []
 
     @property
     def attack(self):
