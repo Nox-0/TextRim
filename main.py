@@ -342,11 +342,13 @@ class Shop:
         print("\nGold: %d" % PlayerIG.gold)
         print("1) See Weapons")
         print("2) See Potions")
-        print("0) Back")
+        print("3) See Spells")
+        print("\n0) Back")
         option = input("--> ")
 
         if option == "1": Shop.shopWeapons()
         elif option == "2": Shop.shopPotions()
+        elif option == "3": Shop.shopSpells()
         elif option == "0": gameLoop()
         else: Shop.shopFront()
 
@@ -404,8 +406,30 @@ class Shop:
                 store()
         else: Shop.shopPotions()
 
+    def shopSpells():
+        os.system('cls')
+        print("Gold: %d \n" % PlayerIG.gold)
+        for spells in magicka.attackSpells:
+            print(spells, ":", magicka.attackSpells[spells]["value"], "gold")
 
+        print("\n0) Back")
+        option = input("--> ")
 
+        if option == "0": Shop.shopFront()
+        elif option in magicka.attackSpells:
+            if PlayerIG.gold >= magicka.attackSpells[option]["value"]:
+                os.system('cls')
+                PlayerIG.gold -= magicka.attackSpells[option]["value"]
+                PlayerIG.spellInv.append(option)
+                print("You have bought a %s spell" % option)
+                option = input('')
+                Shop.shopSpells()
+            else:
+                os.system('cls')
+                print("You don't have enough gold!")
+                option = input('')
+                store()
+        else: Shop.shopSpells()
 
 
 #GAME STATE
