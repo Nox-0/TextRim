@@ -224,7 +224,7 @@ def inventory():
 def spellInventory():
     os.system('cls')
     for spells in PlayerIG.spellsInv:
-        print(spells)
+        print(spells, ":",  magicka.attackSpells[spellAttack] + "damage")
 
     option = input("--> ")
     if option == "0": gameLoop()
@@ -334,7 +334,6 @@ class Equip:
         input("--> ")
         inventory()
 
-
 class Shop:
     def shopFront():
         os.system('cls')
@@ -420,7 +419,7 @@ class Shop:
             if PlayerIG.gold >= magicka.attackSpells[option]["value"]:
                 os.system('cls')
                 PlayerIG.gold -= magicka.attackSpells[option]["value"]
-                PlayerIG.spellInv.append(option)
+                PlayerIG.spellsInv.append(option)
                 print("You have bought a %s spell" % option)
                 option = input('')
                 Shop.shopSpells()
