@@ -1,4 +1,4 @@
 #ATTACK SPELLS
 attackSpells = {
-    "Flames": {"spellAttack": 20, "value": 10}
+    "Flames": {"spellDamage": 20, "manaCost": 10, "value": 100 }
 }

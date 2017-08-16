@@ -2,7 +2,7 @@ import sys, os, random, pickle, Player, Monster, Items, magicka
 
 #A GAME MADE BY THE ONE TRUE GOD.
 #TO CREATE:
-#TODO: MAGICKA/MAGIC, CRIT DAMAGE/CHANCE, PLAYER RACES, EQUIPMENT REPLACING, LEVELXP FUNCTION, MP CAP, EQUIPMENT, CLASS PERKS, PERK
+#TODO: CRIT DAMAGE/CHANCE, PLAYER RACES, EQUIPMENT REPLACING, LEVELXP FUNCTION, MANA AND MANA CAP, EQUIPMENT, CLASS PERKS, PERKS,
 #TO IMPROVE:
 #TODO: COMBAT, SHOP, BETTER ENEMIES, DYING, EQUIPPING
 
@@ -92,36 +92,19 @@ def fight():
 #PLAYER ATTACK FUNCTINO
 def playerAttack():
     os.system('cls')
-    playerAttack = round(random.uniform(PlayerIG.attack/2, PlayerIG.attack), 0)
+    playerDamage = round(random.uniform(PlayerIG.attack/2, PlayerIG.attack), 0)
     acc = Dice.missRoll(90) #acc for accuracy
     if acc <= PlayerIG.miss:
         print("You missed!")
         input('')
         enemyAttack()
     else:
-        enemy.hp -= playerAttack
-        print("You deal %i damage!"  % playerAttack)
+        enemy.hp -= playerDamage
+        print("You deal %i damage!"  % playerDamage)
         input('')
 
     if enemy.hp <= 0: win()
     else: enemyAttack()
-
-#ENEMY'S ATTACK FUNCTION
-def enemyAttack():
-    os.system('cls')
-    enemyAttack = round(random.uniform(enemy.attack/2, enemy.attack), 0)
-    acc = Dice.missRoll(90)
-    if acc <= enemy.miss:
-        print("%s missed!" % enemy.name)
-        input('')
-        fight()
-    else:
-        PlayerIG.hp -= enemyAttack
-        print("%s dealt %i damage!"  % (enemy.name, enemyAttack))
-        input('')
-
-    if PlayerIG.hp <= 0: lose()
-    else: fight()
 
 #THIS POTION FUNCTION IS WHEN THE PLAYER IS IN BATTLE
 def potBattle():
@@ -148,7 +131,52 @@ def potBattle():
     potInventory()
 
 def spellBattle():
-    fight()
+    os.system('cls')
+    print("%s's Health: %d/%d" %(PlayerIG.name, PlayerIG.hp, PlayerIG.maxhp))
+
+    for spells in PlayerIG.spellInv:
+        print(spells, ":", magicka.attackSpells[spells]["spellDamage"], "damage,", magicka.attackSpells[spells]["manaCost"], "mana")
+
+    print("\n0) Back to fight")
+    option = input("--> ")
+
+    if option == "0": fight()
+    elif option in PlayerIG.spellInv:
+        os.system('cls')
+        playerDamage = round(random.uniform(magicka.attackSpells[spells]["spellDamage"]/2, magicka.attackSpells[spells]["spellDamage"]), 0)
+
+        acc = Dice.missRoll(90) #acc for accuracy
+        if acc <= PlayerIG.miss:
+            print("You missed!")
+            input('')
+            enemyAttack()
+        else:
+            enemy.hp -= playerDamage
+            print("You deal %i damage!"  % playerDamage)
+            input('')
+
+        if enemy.hp <= 0: win()
+        else: enemyAttack()
+
+    else: spellBattle()
+
+
+def enemyAttack():
+    os.system('cls')
+    enemyDamage = round(random.uniform(enemy.attack/2, enemy.attack), 0)
+    acc = Dice.missRoll(90)
+    if acc <= enemy.miss:
+        print("%s missed!" % enemy.name)
+        input('')
+        fight()
+    else:
+        PlayerIG.hp -= enemyDamage
+        print("%s dealt %i damage!"  % (enemy.name, enemyDamage))
+        input('')
+
+    if PlayerIG.hp <= 0: lose()
+    else: fight()
+
 
 #WIN FUNCITONS
 def win():
@@ -223,10 +251,12 @@ def inventory():
 
 def spellInventory():
     os.system('cls')
-    for spells in PlayerIG.spellsInv:
-        print(spells, ":",  magicka.attackSpells[spellAttack] + "damage")
+    for spells in PlayerIG.spellInv:
+        print(spells, ":", magicka.attackSpells[spells]["spellDamage"], "damage,", magicka.attackSpells[spells]["manaCost"], "mana")
 
+    print("\n0) Back")
     option = input("--> ")
+
     if option == "0": gameLoop()
     else: spellInventory()
 
@@ -334,6 +364,7 @@ class Equip:
         input("--> ")
         inventory()
 
+
 class Shop:
     def shopFront():
         os.system('cls')
@@ -342,7 +373,7 @@ class Shop:
         print("1) See Weapons")
         print("2) See Potions")
         print("3) See Spells")
-        print("\n0) Back")
+        print("0) Back")
         option = input("--> ")
 
         if option == "1": Shop.shopWeapons()
@@ -402,12 +433,14 @@ class Shop:
                 os.system('cls')
                 print("You don't have enough gold!")
                 option = input('')
-                store()
+                Shop.shopPotions()
         else: Shop.shopPotions()
 
     def shopSpells():
         os.system('cls')
-        print("Gold: %d \n" % PlayerIG.gold)
+        print("Spell Shop Area.")
+        print("\nGold: %d \n" % PlayerIG.gold)
+
         for spells in magicka.attackSpells:
             print(spells, ":", magicka.attackSpells[spells]["value"], "gold")
 
@@ -419,15 +452,15 @@ class Shop:
             if PlayerIG.gold >= magicka.attackSpells[option]["value"]:
                 os.system('cls')
                 PlayerIG.gold -= magicka.attackSpells[option]["value"]
-                PlayerIG.spellsInv.append(option)
-                print("You have bought a %s spell" % option)
+                PlayerIG.spellInv.append(option)
+                print("You have bought a %s" % option)
                 option = input('')
                 Shop.shopSpells()
             else:
                 os.system('cls')
                 print("You don't have enough gold!")
                 option = input('')
-                store()
+                Shop.shopSpells()
         else: Shop.shopSpells()
 
 
