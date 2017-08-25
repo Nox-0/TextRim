@@ -2,7 +2,7 @@ import sys, os, random, pickle, Player, Monster, Items, magicka
 
 #A GAME MADE BY THE ONE TRUE GOD.
 #TO CREATE:
-#TODO: CRIT DAMAGE/CHANCE, PLAYER RACES, EQUIPMENT REPLACING, LEVELXP FUNCTION, MANA AND MANA CAP, EQUIPMENT, CLASS PERKS, PERKS,
+#TODO: CRIT DAMAGE/CHANCE, EQUIPMENT REPLACING, LEVELXP FUNCTION, MANA AND MANA CAP, EQUIPMENT, 
 #TO IMPROVE:
 #TODO: COMBAT, SHOP, BETTER ENEMIES, DYING, EQUIPPING
 
@@ -34,6 +34,23 @@ def newGame():
     option = input("--> ")
     global PlayerIG
     PlayerIG = Player.Character(option)
+    raceSelection()
+
+def raceSelection():
+    #Race selection
+    os.system('cls')
+    print("Choose your race:")
+
+    for race in raceList:
+        print(race)
+
+    option = input("--> ")
+
+    if option in raceList:
+            raceList[option]()
+
+    else:
+        raceSelection()
     start()
 
 
@@ -41,7 +58,6 @@ def newGame():
 def start():
     os.system('cls')
     print("Welcome, %s!" % PlayerIG.name)
-    option = input('')
     gameLoop()
 
 
@@ -49,7 +65,7 @@ def start():
 def gameLoop():
     os.system('cls')
     print("1) Fight")
-    print("\n2) Shop \n3) Character \n4) Stats")
+    print("\n2) Shop \n3) Character")
     print("\n9) Save Game \n0) Exit")
     option = input("--> ")
 
@@ -283,12 +299,41 @@ def potInventory():
     else: print("You don't have that potion!")
     potInventory()
 
+#PERK MENU
+def perks():
+    os.system('cls')
+    print("Smithing:", PlayerIG.smithing)
+    print("Heavy Armour:", PlayerIG.heavyArmour)
+    print("Block:", PlayerIG.block)
+    print("Two-Handed:", PlayerIG.twoHanded)
+    print("One-Handed:", PlayerIG.oneHanded)
+    print("Archery:", PlayerIG.archery)
+    print("Light Armour:", PlayerIG.lightArmour)
+    print("Sneak:", PlayerIG.sneak)
+    print("Lockpicking:", PlayerIG.lockpicking)
+    print("Speech:", PlayerIG.speech)
+    print("Pickpocket:", PlayerIG.pickpocket)
+    print("Alchemy:", PlayerIG.alchemy)
+    print("Illusion:", PlayerIG.illusion)
+    print("Conjuration:", PlayerIG.conjuration)
+    print("Destruction:", PlayerIG.destruction)
+    print("Restoration:", PlayerIG.restoration)
+    print("Alteration", PlayerIG.alteration)
+    print("Enchanting:", PlayerIG.enchanting)
+
+    print("\n0) Back")
+    option = input("--> ")
+
+    if option == "0": gameLoop()
+    else: perks()
+
 #------------------------------------------------------------------------------
 
 def stats():
     os.system('cls')
     print("Stats:\n")
     print("Name: %s" % PlayerIG.name)
+    print("Race: %s" % PlayerIG.race)
     print("Attack: %i" % PlayerIG.attack)
     print("Gold: %d" % PlayerIG.gold)
     print("Current Weapon: %s" % PlayerIG.curweap)
@@ -494,6 +539,56 @@ class Dice:
         return roll
 
 
+
+#races
+def altmerRace():
+    PlayerIG.race = "Altmer"
+
+    PlayerIG.illusion = 25
+    PlayerIG.conjuration = 20
+    PlayerIG.destruction = 20
+    PlayerIG.restoration = 20
+    PlayerIG.alteration = 20
+    PlayerIG.enchanting = 20
+    start()
+
+def argonianRace():
+    PlayerIG.race = "Argonian"
+
+    PlayerIG.illusion = 25
+    PlayerIG.conjuration = 20
+    PlayerIG.destruction = 20
+    PlayerIG.restoration = 20
+    PlayerIG.alteration = 20
+    PlayerIG.enchanting = 20
+    start()
+def bosmerRace():
+    pass
+def bretonRace():
+    pass
+def dunmerRace():
+    pass
+def imperialRace():
+    pass
+def khajiitRace():
+    pass
+def nordRace():
+    pass
+def orsimerRace():
+    pass
+def redguardRace():
+    pass
+
+raceList = {"Altmer": altmerRace,
+"Argonian": argonianRace,
+"Bosmer": bosmerRace,
+"Breton": bretonRace,
+"Dunmer": dunmerRace,
+"Imperial": imperialRace,
+"Khajiit": khajiitRace,
+"Nord": nordRace,
+"Orsimer": orsimerRace,
+"Redguard": redguardRace}
 
 
 menu()
